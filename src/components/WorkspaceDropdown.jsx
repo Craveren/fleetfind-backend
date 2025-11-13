@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWorkspaceById, fetchWorkspaces } from "../features/workspaceSlice";
 import { useNavigate } from "react-router-dom";
 import { assets } from '../assets/assets'; // Import assets for fallback image
+import { getApiBaseUrl } from '../utils/env';
 
 function WorkspaceDropdown() {
 
@@ -16,6 +17,7 @@ function WorkspaceDropdown() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const API_BASE_URL = getApiBaseUrl();
 
     const onSelectWorkspace = async (organizationId) => {
         await dispatch(fetchWorkspaceById(organizationId));
@@ -28,7 +30,7 @@ function WorkspaceDropdown() {
     const createWorkspace = async () => {
         if (!newWsName.trim()) return;
         try {
-            const res = await fetch('http://localhost:5000/api/workspaces', {
+            const res = await fetch(`${API_BASE_URL}/api/workspaces`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newWsName }),

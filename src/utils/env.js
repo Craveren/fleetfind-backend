@@ -28,3 +28,11 @@ export function getClerkPublishableKey() {
 }
 
 
+export function getApiBaseUrl() {
+    // Prefer explicit Vite/CRA variables; fallback to localhost for dev
+    return (
+        getEnvValue(['VITE_API_URL', 'REACT_APP_API_URL']) ||
+        'http://localhost:5000'
+    );
+}
+

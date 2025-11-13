@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
+import { getApiBaseUrl } from '../utils/env';
 
 const initialState = {
     workspaces: [],
@@ -8,11 +9,13 @@ const initialState = {
     error: null,
 };
 
+const API_BASE_URL = getApiBaseUrl();
+
 // Async thunks for fetching data
 export const fetchWorkspaces = createAsyncThunk(
     'workspace/fetchWorkspaces',
     async () => {
-        const response = await fetch('http://localhost:5000/api/workspaces');
+        const response = await fetch(`${API_BASE_URL}/api/workspaces`);
         const data = await response.json();
         return data;
     }
@@ -21,31 +24,31 @@ export const fetchWorkspaces = createAsyncThunk(
 export const fetchWorkspaceById = createAsyncThunk(
     'workspace/fetchWorkspaceById',
     async (workspaceId) => {
-        const response = await fetch(`http://localhost:5000/api/workspaces/${workspaceId}`);
+        const response = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceId}`);
         const data = await response.json();
 
         // Removed membersResponse fetch as teamMembersSlice will handle this
-        // const membersResponse = await fetch(`http://localhost:5000/api/workspaces/${workspaceId}/members`);
+        // const membersResponse = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceId}/members`);
         // const membersData = await membersResponse.json();
 
-        const booksResponse = await fetch(`http://localhost:5000/api/books?workspace_id=${workspaceId}`);
+        const booksResponse = await fetch(`${API_BASE_URL}/api/books?workspace_id=${workspaceId}`);
         const booksData = await booksResponse.json();
 
         const booksWithDetails = await Promise.all(booksData.map(async book => {
-            const tasksResponse = await fetch(`http://localhost:5000/api/books/${book.id}/tasks`);
+            const tasksResponse = await fetch(`${API_BASE_URL}/api/books/${book.id}/tasks`);
             const tasksData = await tasksResponse.json();
 
-            const publishingStagesResponse = await fetch(`http://localhost:5000/api/books/${book.id}/publishingStages`);
+            const publishingStagesResponse = await fetch(`${API_BASE_URL}/api/books/${book.id}/publishingStages`);
             const publishingStagesData = await publishingStagesResponse.json();
 
-            const royaltiesResponse = await fetch(`http://localhost:5000/api/books/${book.id}/royalties`);
+            const royaltiesResponse = await fetch(`${API_BASE_URL}/api/books/${book.id}/royalties`);
             const royaltiesData = await royaltiesResponse.json();
 
-            const launchPlansResponse = await fetch(`http://localhost:5000/api/books/${book.id}/launchPlans`);
+            const launchPlansResponse = await fetch(`${API_BASE_URL}/api/books/${book.id}/launchPlans`);
             const launchPlansData = await launchPlansResponse.json();
 
             const tasksWithComments = await Promise.all(tasksData.map(async task => {
-                const commentsResponse = await fetch(`http://localhost:5000/api/tasks/${task.id}/comments`);
+                const commentsResponse = await fetch(`${API_BASE_URL}/api/tasks/${task.id}/comments`);
                 const commentsData = await commentsResponse.json();
                 return { ...task, comments: commentsData };
             }));
@@ -68,7 +71,7 @@ export const addAuthorBook = createAsyncThunk(
     'workspace/addAuthorBook',
     async (newBookData, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/books', {
+            const response = await fetch(`${API_BASE_URL}/api/books`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +94,7 @@ export const updateAuthorBook = createAsyncThunk(
     'workspace/updateAuthorBook',
     async (updatedBookData, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/books/${updatedBookData.id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/books/${updatedBookData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +117,7 @@ export const addCommentToTask = createAsyncThunk(
     'workspace/addCommentToTask',
     async ({ bookId, taskId, comment }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/comments`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -137,7 +140,7 @@ export const addRoyalty = createAsyncThunk(
     'workspace/addRoyalty',
     async ({ authorBookId, royalty }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/books/${authorBookId}/royalties`, {
+            const response = await fetch(`${API_BASE_URL}/api/books/${authorBookId}/royalties`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -160,7 +163,7 @@ export const deleteTask = createAsyncThunk(
     'workspace/deleteTask',
     async ({ taskId }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -178,7 +181,7 @@ export const updateTask = createAsyncThunk(
     'workspace/updateTask',
     async (updatedTaskData, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/tasks/${updatedTaskData.id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/tasks/${updatedTaskData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -201,7 +204,7 @@ export const updatePublishingStage = createAsyncThunk(
     'workspace/updatePublishingStage',
     async ({ stageId, updatedData }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/publishing-stages/${stageId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/publishing-stages/${stageId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -224,7 +227,7 @@ export const updateWorkspace = createAsyncThunk(
     'workspace/updateWorkspace',
     async ({ workspaceId, updatedData }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/workspaces/${workspaceId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -247,7 +250,7 @@ export const deleteWorkspace = createAsyncThunk(
     'workspace/deleteWorkspace',
     async (workspaceId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/workspaces/${workspaceId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {

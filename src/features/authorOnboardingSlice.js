@@ -1,17 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchOnboardingProgress = createAsyncThunk(
     'authorOnboarding/fetchOnboardingProgress',
     async (userId, { rejectWithValue, dispatch, getState }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/author-onboarding/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/author-onboarding/${userId}`);
             if (!response.ok) {
                 // If record not found, we assume it's a new user and return a default structure
                 if (response.status === 404) {
                     // Try to create a default record using current workspace if available
                     const state = getState();
                     const workspaceId = state?.workspace?.currentWorkspace?.id || null;
-                    const createRes = await fetch(`http://localhost:5000/api/author-onboarding`, {
+                    const createRes = await fetch(`${API_BASE_URL}/api/author-onboarding`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: userId, workspace_id: workspaceId, steps_completed: [], progress_percent: 0 }),
@@ -38,7 +41,7 @@ export const updateOnboardingProgress = createAsyncThunk(
     'authorOnboarding/updateOnboardingProgress',
     async ({ userId, stepsCompleted, progressPercent }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/author-onboarding/${userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/author-onboarding/${userId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ steps_completed: stepsCompleted, progress_percent: progressPercent }),
@@ -59,7 +62,7 @@ export const createOnboardingProgress = createAsyncThunk(
     'authorOnboarding/createOnboardingProgress',
     async ({ userId, workspaceId }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/author-onboarding`, {
+            const response = await fetch(`${API_BASE_URL}/api/author-onboarding`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId, workspace_id: workspaceId, steps_completed: [], progress_percent: 0 }),

@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchBookSales = createAsyncThunk(
     'bookSales/fetchBookSales',
     async (queryParams = {}, { rejectWithValue }) => {
         try {
             const queryString = new URLSearchParams(queryParams).toString();
-            const response = await fetch(`http://localhost:5000/api/book-sales${queryString ? `?${queryString}` : ''}`);
+            const response = await fetch(`${API_BASE_URL}/api/book-sales${queryString ? `?${queryString}` : ''}`);
             if (!response.ok) {
                 const error = await response.json();
                 return rejectWithValue(error);

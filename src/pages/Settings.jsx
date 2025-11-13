@@ -7,9 +7,11 @@ import { fetchUserPreferences, createUserPreferences, updateUserPreferences } fr
 import { SunIcon, MoonIcon, Save, Trash2, Globe, Bell, FileText, UsersIcon, LinkIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { getApiBaseUrl } from '../utils/env';
 import ProfileImageUploader from '../components/ProfileImageUploader';
 
 const Settings = () => {
+  const API_BASE_URL = getApiBaseUrl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useUser();
@@ -150,7 +152,7 @@ const Settings = () => {
     toast.loading("Generating invite link...");
     try {
       // For now, assume default role is 'member'
-      const response = await fetch(`http://localhost:5000/api/workspaces/${currentWorkspace.id}/invite-link`, {
+      const response = await fetch(`${API_BASE_URL}/api/workspaces/${currentWorkspace.id}/invite-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'member' }),

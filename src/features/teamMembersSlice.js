@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchTeamMembers = createAsyncThunk(
     'teamMembers/fetchTeamMembers',
     async (workspaceId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/team-members?workspace_id=${workspaceId}`);
+            const response = await fetch(`${API_BASE_URL}/api/team-members?workspace_id=${workspaceId}`);
             if (!response.ok) {
                 const error = await response.json();
                 return rejectWithValue(error);
@@ -23,7 +26,7 @@ export const inviteTeamMember = createAsyncThunk(
         try {
             // In a real app, this would involve Clerk's invitation API, then creating a record in our DB
             // For now, we'll simulate the DB creation directly.
-            const response = await fetch('http://localhost:5000/api/team-members', {
+            const response = await fetch(`${API_BASE_URL}/api/team-members`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, workspace_id, role }),
@@ -44,7 +47,7 @@ export const updateTeamMemberRole = createAsyncThunk(
     'teamMembers/updateTeamMemberRole',
     async ({ memberId, role }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/team-members/${memberId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/team-members/${memberId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role }),
@@ -65,7 +68,7 @@ export const assignBookToMember = createAsyncThunk(
     'teamMembers/assignBookToMember',
     async ({ bookId, teamMemberId }, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/books-team-members', {
+            const response = await fetch(`${API_BASE_URL}/api/books-team-members`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ book_id: bookId, team_member_id: teamMemberId }),
@@ -86,7 +89,7 @@ export const removeBookFromMember = createAsyncThunk(
     'teamMembers/removeBookFromMember',
     async ({ bookId, teamMemberId }, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/books-team-members', {
+            const response = await fetch(`${API_BASE_URL}/api/books-team-members`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ book_id: bookId, team_member_id: teamMemberId }),

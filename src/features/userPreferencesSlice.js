@@ -1,14 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchUserPreferences = createAsyncThunk(
     'userPreferences/fetchUserPreferences',
     async (userId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/user-preferences/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/user-preferences/${userId}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     // Auto-create default preferences on first access
-                    const createRes = await fetch('http://localhost:5000/api/user-preferences', {
+                    const createRes = await fetch(`${API_BASE_URL}/api/user-preferences`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: userId, theme_preference: 'light', language_preference: 'en', notifications: {} }),
@@ -34,7 +37,7 @@ export const createUserPreferences = createAsyncThunk(
     'userPreferences/createUserPreferences',
     async (preferencesData, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/user-preferences', {
+            const response = await fetch(`${API_BASE_URL}/api/user-preferences`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(preferencesData),
@@ -55,7 +58,7 @@ export const updateUserPreferences = createAsyncThunk(
     'userPreferences/updateUserPreferences',
     async ({ userId, preferencesData }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/user-preferences/${userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/user-preferences/${userId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(preferencesData),

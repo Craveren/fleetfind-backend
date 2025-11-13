@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchCampaigns = createAsyncThunk(
     'campaigns/fetchCampaigns',
     async (workspaceId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/campaigns?workspace_id=${workspaceId}`);
+            const response = await fetch(`${API_BASE_URL}/api/campaigns?workspace_id=${workspaceId}`);
             if (!response.ok) {
                 const error = await response.json();
                 return rejectWithValue(error);
@@ -21,7 +24,7 @@ export const addCampaign = createAsyncThunk(
     'campaigns/addCampaign',
     async (campaignData, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/campaigns', {
+            const response = await fetch(`${API_BASE_URL}/api/campaigns`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(campaignData),
@@ -42,7 +45,7 @@ export const updateCampaign = createAsyncThunk(
     'campaigns/updateCampaign',
     async ({ campaignId, updatedData }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/campaigns/${campaignId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/campaigns/${campaignId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedData),
@@ -63,7 +66,7 @@ export const deleteCampaign = createAsyncThunk(
     'campaigns/deleteCampaign',
     async (campaignId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/campaigns/${campaignId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/campaigns/${campaignId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });

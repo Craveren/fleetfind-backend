@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiBaseUrl } from '../utils/env';
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const fetchResources = createAsyncThunk(
     'resourceLibrary/fetchResources',
     async (queryParams = {}, { rejectWithValue }) => {
         try {
             const queryString = new URLSearchParams(queryParams).toString();
-            const response = await fetch(`http://localhost:5000/api/resources${queryString ? `?${queryString}` : ''}`);
+            const response = await fetch(`${API_BASE_URL}/api/resources${queryString ? `?${queryString}` : ''}`);
             if (!response.ok) {
                 const error = await response.json();
                 return rejectWithValue(error);
@@ -22,7 +25,7 @@ export const addResource = createAsyncThunk(
     'resourceLibrary/addResource',
     async (resourceData, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/resources', {
+            const response = await fetch(`${API_BASE_URL}/api/resources`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(resourceData),
@@ -43,7 +46,7 @@ export const incrementResourceView = createAsyncThunk(
     'resourceLibrary/incrementResourceView',
     async (resourceId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/resources/${resourceId}/view`, {
+            const response = await fetch(`${API_BASE_URL}/api/resources/${resourceId}/view`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -63,7 +66,7 @@ export const updateResource = createAsyncThunk(
     'resourceLibrary/updateResource',
     async ({ resourceId, updatedData }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/resources/${resourceId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/resources/${resourceId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedData),
@@ -84,7 +87,7 @@ export const deleteResource = createAsyncThunk(
     'resourceLibrary/deleteResource',
     async (resourceId, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/resources/${resourceId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/resources/${resourceId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });

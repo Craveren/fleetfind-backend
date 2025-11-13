@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PrinterIcon, MapPinIcon, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getApiBaseUrl } from '../utils/env';
 import { useSelector } from 'react-redux';
 
 const LocalPrintPartners = () => {
@@ -10,6 +11,7 @@ const LocalPrintPartners = () => {
   const [loadError, setLoadError] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', url: '', location: '' });
   const hasFetched = useRef(false);
+  const API_BASE_URL = getApiBaseUrl();
 
   const fetchPartners = async () => {
     try {
@@ -18,7 +20,7 @@ const LocalPrintPartners = () => {
       const qs = new URLSearchParams();
       qs.set('category', 'PRINT_PARTNER');
       if (currentWorkspace?.id) qs.set('workspace_id', currentWorkspace.id);
-      const res = await fetch(`http://localhost:5000/api/resources?${qs.toString()}`);
+      const res = await fetch(`${API_BASE_URL}/api/resources?${qs.toString()}`);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || 'Failed to fetch partners');
@@ -48,7 +50,7 @@ const LocalPrintPartners = () => {
     }
     try {
       toast.loading('Adding partner...');
-      const res = await fetch('http://localhost:5000/api/resources', {
+      const res = await fetch(`${API_BASE_URL}/api/resources`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -78,7 +80,7 @@ const LocalPrintPartners = () => {
   const removePartner = async (id) => {
     try {
       toast.loading('Removing...');
-      const res = await fetch(`http://localhost:5000/api/resources/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/resources/${id}`, { method: 'DELETE' });
       toast.dismiss();
       if (!res.ok) {
         const err = await res.json();
@@ -121,7 +123,7 @@ const LocalPrintPartners = () => {
           <div>
             {loadError ? (
               <p className="text-red-600 dark:text-red-400">
-                {loadError} — ensure the backend server is running on http://localhost:5000.
+                {loadError} — ensure the backend server is running and reachable.
               </p>
             ) : (
               <p className="text-zinc-600 dark:text-zinc-400">No partners yet. Add your first partner above.</p>

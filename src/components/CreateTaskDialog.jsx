@@ -4,12 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { fetchWorkspaceById } from "../features/workspaceSlice";
+import { getApiBaseUrl } from "../utils/env";
 
 export default function CreateTaskDialog({ showCreateTask, setShowCreateTask, bookId }) {
     const currentWorkspace = useSelector((state) => state.workspace?.currentWorkspace || null);
     const dispatch = useDispatch();
     const book = currentWorkspace?.books?.find((p) => p.id === bookId);
     const teamMembers = book?.members || [];
+    const API_BASE_URL = getApiBaseUrl();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -44,7 +46,7 @@ export default function CreateTaskDialog({ showCreateTask, setShowCreateTask, bo
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             };
-            const res = await fetch(`http://localhost:5000/api/books/${bookId}/tasks`, {
+            const res = await fetch(`${API_BASE_URL}/api/books/${bookId}/tasks`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
